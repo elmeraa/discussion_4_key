@@ -1,0 +1,49 @@
+---
+title: "RMarkdown tips & tricks"
+author: "Allison Horst"
+date: "1/25/2021"
+output: 
+  html_document:
+    theme: darkly
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Some text! 
+
+## Literature Review {.tabset}
+
+### R History
+
+Some content I've added to this amazing tab! 
+
+### My favorite R packages
+
+And an amazing plot! 
+```{r}
+plot(airmiles)
+```
+
+### Here's another one! 
+
+Wow this table: 
+
+```{r}
+head(mtcars)
+```
+
+
+## R for Environmental Data Science
+
+### Exploratory analysis
+
+### Models
+
+## Conclusion
