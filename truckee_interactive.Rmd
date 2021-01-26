@@ -1,0 +1,90 @@
+---
+title: "Discussion 4"
+author: "Allison Horst"
+date: "1/25/2021"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(here)
+library(lubridate)
+library(feasts)
+library(tsibble)
+```
+
+```{r}
+# Read in the data
+
+truckee <- read_csv(here("data","truckee_river.csv"), skip = 29) %>% 
+  slice(-1) %>% 
+  select(datetime, discharge_cfs)
+```
+
+```{r}
+# Convert to a tsibble
+
+truckee_ts <- truckee %>% 
+  mutate(datetime = mdy(datetime)) %>% 
+  mutate(discharge_cfs = as.numeric(discharge_cfs)) %>% 
+  as_tsibble(key = NULL, index = datetime)
+```
+
+## Truckee River flow (2010 - present)
+
+```{r}
+# Make a stationary time series plot
+ggplot(data = truckee_ts, aes(x = datetime, y = discharge_cfs)) +
+  geom_line() +
+  theme_minimal()
+
+# And a seasonplot
+truckee_ts %>% 
+  gg_season() +
+  theme_minimal()
+```
+
+But wouldn't it be cool if the user could select the range they wanted to check out more closely? Let's help them do it! 
+
+```{r choose_ts, echo = FALSE}
+
+# Make the widget
+inputPanel(
+  dateRangeInput(inputId = "dates", 
+                 label = h4("Select date range:"),
+                 min = "2010-01-01",
+                 max = "2021-01-24", 
+                 start = "2010-01-01",
+                 end = "2021-01-24",
+                 format="yyyy-mm-dd")
+)
+
+# Make a reactive data frame, filtering to only include date range specified
+
+truckee_react <- reactive({
+  
+  truckee_ts %>% 
+    filter(datetime >= input$dates[1], 
+           datetime <= input$dates[2])
+  
+})
+
+# Make a reactive time series plot
+
+renderPlot({
+  
+  ggplot(data = truckee_react(), aes(x = datetime, y = discharge_cfs)) +
+    geom_line() +
+    theme_minimal() +
+    labs(x = "Date", y = "Truckee River daily mean discharge")
+  
+ })
+
+
+
+```
+
+
+
