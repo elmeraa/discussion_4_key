@@ -1,0 +1,37 @@
+---
+title: "My awesome Rmarkdown"
+author: "Elmera Azadpour"
+date: "1/28/2021"
+output: 
+  html_document: 
+    theme: darkly
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Intro {.tabset}
+
+```{r}
+# Hello I am testing this 
+
+44 + 45
+
+Penny <- 2021 + 4
+```
+
+
+## Background
+
+## History
+
+### Elmera's Testing
+
+# RMarkdown is cool
+
+## Subsection
+

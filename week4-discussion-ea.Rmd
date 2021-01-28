@@ -1,0 +1,77 @@
+---
+title: "Week4-Discussion"
+author: "Elmera Azadpour"
+date: "1/28/2021"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+library(lubridate)
+library(feasts)
+library(tsibble)
+```
+
+## read in data
+```{r}
+truckee <- read_csv(here("data","truckee_river.csv"), skip = 29) %>% 
+  slice(-1) %>% 
+  select(datetime, discharge_cfs) %>% 
+  mutate(discharge_cfs = as.numeric(discharge_cfs),
+         datetime = mdy(datetime)) %>% 
+  as_tsibble(key = NULL, index = datetime)
+
+truckee %>% 
+  gg_season()
+```
+
+## Add some shiny
+```{r}
+inputPanel(
+  
+  dateRangeInput(inputId = "dates" ,
+                 label = "Select date range:",
+                 min = "2010-01-01",
+                 max = "2021-01-24",
+                 start = "2010-01-01",
+                 end = "2021-01-24",
+                 format = "yyyy-mm-dd")
+
+)
+
+
+truckee_react <- reactive({
+  
+  truckee %>% 
+    filter(datetime >= input$dates[1],
+           datetime <= input$dates[2])
+    
+  
+})
+
+renderPlot({
+  
+  
+  ggplot(data = truckee_react(), aes(x = datetime, y = discharge_cfs)) +
+    geom_line()
+  
+  
+  
+  
+})
+
+
+
+
+
+
+
+
+
+
+```
+
